@@ -89,7 +89,13 @@ export const DesignSystemBuilder: React.FC<DesignSystemBuilderProps> = ({
   ];
 
   const createComponent = () => {
-    if (!newComponentName.trim()) return;
+    const trimmedName = newComponentName.trim();
+    if (!trimmedName) {
+      // Auto-generate a name if empty
+      const defaultName = `${newComponentType.charAt(0).toUpperCase() + newComponentType.slice(1)} ${components.length + 1}`;
+      setNewComponentName(defaultName);
+      return;
+    }
 
     const componentId = `${newComponentType}-${Date.now()}`;
     const variants = createDefaultVariants(newComponentType);
@@ -97,7 +103,7 @@ export const DesignSystemBuilder: React.FC<DesignSystemBuilderProps> = ({
     const newComponent: DesignSystemComponent = {
       id: componentId,
       type: newComponentType,
-      name: newComponentName,
+      name: trimmedName,
       description: `A ${newComponentType} component`,
       category: 'General',
       variants,
@@ -244,7 +250,7 @@ export const DesignSystemBuilder: React.FC<DesignSystemBuilderProps> = ({
                 </Select>
                 
                 <Input
-                  placeholder="Component name"
+                  placeholder={`${newComponentType.charAt(0).toUpperCase() + newComponentType.slice(1)} ${components.length + 1}`}
                   value={newComponentName}
                   onChange={(e) => setNewComponentName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && createComponent()}
